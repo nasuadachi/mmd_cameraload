@@ -90,6 +90,9 @@ public class MMD_VmdCameraLoad : MonoBehaviour {
             Cam[i].frame = System.BitConverter.ToInt32(frame_data, 0);
             //距離
             Cam[i].distans = getVmdCamera(ref index, raw_data_org);
+            float sign = Math.Sign(Cam[i].distans);
+            if ( Math.Abs(Cam[i].distans) < 7.8f ) Cam[i].distans = sign * 7.8f; // MMDのカメラはこれ以上近づけない
+
             //位置
             Cam[i].Pos_x = getVmdCamera(ref index, raw_data_org);
             Cam[i].Pos_y = getVmdCamera(ref index, raw_data_org);
@@ -233,16 +236,17 @@ public class MMD_VmdCameraLoad : MonoBehaviour {
 
     float getVmdCamera( ref int index ,byte[] data)
     {
-        Union union = new Union();
+        // Union union = new Union();
         byte[] raw_data = new byte[4];
 
         raw_data[0] = data[index++];
         raw_data[1] = data[index++];
         raw_data[2] = data[index++];
         raw_data[3] = data[index++];
-        union.int0 = System.BitConverter.ToInt32(raw_data, 0);
+        // union.int0 = System.BitConverter.ToInt32(raw_data, 0);
+        // return (union.float0);
+        return System.BitConverter.ToSingle(raw_data, 0);
 
-        return (union.float0);
     }
     // ラジアンから角度を取得
     void conversionAngle(ref float rot)
